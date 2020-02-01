@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CarComponent))]
+[RequireComponent(typeof(CarController), typeof(EmotionController))]
 public class CarDriver : MonoBehaviour
 {
     [HideInInspector]
     public CarController carController;
+    [HideInInspector]
+    public EmotionController emotionController;
 
     public bool isDriving;
     public Checkpoint nextCheckpoint;
@@ -14,6 +16,11 @@ public class CarDriver : MonoBehaviour
     void Awake()
     {
         this.carController = this.GetComponent<CarController>();
+    }
+
+    void Start()
+    {
+        DriverHandler.Instance.Register(this);
     }
 
     void Update()
