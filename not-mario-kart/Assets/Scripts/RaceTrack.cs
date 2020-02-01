@@ -11,10 +11,10 @@ public class RaceTrack : MonoBehaviour
     {
         // get checkpoints
         this.checkpoints = this.GetComponentsInChildren<Checkpoint>();
-        // register to checkpoints  
-        foreach (Checkpoint checkpoint in this.checkpoints)
+        // setup checkpoints
+        for (int i = 0; i < this.checkpoints.Length; ++i)
         {
-            checkpoint.raceTrack = this;
+            this.checkpoint[i].Setup(this, i == this.checkpoints.Length - 1 ? this.checkpoints[0] : this.checkpoints[i + 1]);
         }
     }
 }
