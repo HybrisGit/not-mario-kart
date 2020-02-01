@@ -17,22 +17,52 @@ public class CarController : MonoBehaviour
     public float maxMotorTorque; // maximum torque the motor can apply to wheel
     public float maxSteeringAngle; // maximum steer angle the wheel can have
 
+    private float _currentTorque;
+    public float CurrentTorque
+    {
+        get
+        {
+            return this._currentTorque;
+        }
+        set
+        {
+            this._currentTorque = value;
+            if (this._currentTorque > this.maxMotorTorque)
+            {
+                this._currentTorque = this.maxMotorTorque;
+            }
+        }
+    }
+    private float _currentSteering;
+    public float CurrentSteering
+    {
+        get
+        {
+            return this._currentSteering;
+        }
+        set
+        {
+            this._currentSteering = value;
+            if (this._currentSteering > this.maxSteeringAngle)
+            {
+                this._currentSteering = this.maxSteeringAngle;
+            }
+        }
+    }
+
     public void FixedUpdate()
     {
-        float motor = maxMotorTorque * Input.GetAxis("Vertical");
-        float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
-
         foreach (AxleInfo axleInfo in axleInfos)
         {
             if (axleInfo.steering)
             {
-                axleInfo.leftWheel.Collider.steerAngle = steering;
-                axleInfo.rightWheel.Collider.steerAngle = steering;
+                axleInfo.leftWheel.Collider.steerAngle = this.CurrentSteering;
+                axleInfo.rightWheel.Collider.steerAngle = this.CurrentSteering;
             }
             if (axleInfo.motor)
             {
-                axleInfo.leftWheel.Collider.motorTorque = motor;
-                axleInfo.rightWheel.Collider.motorTorque = motor;
+                axleInfo.leftWheel.Collider.motorTorque = this.CurrentTorque;
+                axleInfo.rightWheel.Collider.motorTorque = this.CurrentTorque;
             }
         }
     }
