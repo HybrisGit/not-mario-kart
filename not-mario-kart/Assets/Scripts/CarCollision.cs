@@ -5,11 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class CarCollision : MonoBehaviour
 {
-    public EmotionController emotionController;
+    public GameCharacterController characterController;
 
     void OnCollisionEnter(Collision collision)
     {
         //TODO: collision severity check
-        this.emotionController.SetEmotion(EmotionController.EmotionType.Angry);
+        this.characterController.selectedCharacter.emotions.SetEmotion(EmotionController.EmotionType.Angry);
     }
 }

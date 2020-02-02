@@ -17,6 +17,7 @@ public class CarController : MonoBehaviour
     public float maxMotorTorque; // maximum torque the motor can apply to wheel
     public float maxSteeringAngle; // maximum steer angle the wheel can have
 
+    [SerializeField]
     private float _currentTorque;
     public float CurrentTorque
     {
@@ -33,6 +34,7 @@ public class CarController : MonoBehaviour
             }
         }
     }
+    [SerializeField]
     private float _currentSteering;
     public float CurrentSteering
     {
@@ -48,6 +50,16 @@ public class CarController : MonoBehaviour
                 this._currentSteering = this.maxSteeringAngle;
             }
         }
+    }
+
+    public void SetTorque(float torque)
+    {
+        this.CurrentTorque = torque * this.maxMotorTorque;
+    }
+
+    public void SetSteering(float angle)
+    {
+        this.CurrentSteering = angle * this.maxSteeringAngle;
     }
 
     public void FixedUpdate()

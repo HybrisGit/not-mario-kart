@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Random = System.Random;
 
 public class EmotionController : MonoBehaviour
 {
@@ -12,25 +15,49 @@ public class EmotionController : MonoBehaviour
     }
 
     [System.Serializable]
-    public struct EmotionData
+    public class EmotionData
     {
         public EmotionType emotionType;
         public GameObject emoji;
-        public AudioClip audio;
+        public AudioClip[] audioClips;
 
-        public void SetActive(bool active)
+        private int lastClip = 0;
+
+        private static Random rng = new Random();
+
+        public void SetActive(bool active, AudioSource audioSource)
         {
-            this.emotion.SetActive(active);
-            // TODO: play/stop audio
+            this.emoji.SetActive(active);
+            if (active)
+            {
+                // pick random clip
+                int newClipIndex;
+                if (this.audioClips.Length == 1)
+                {
+                    newClipIndex = 0;
+                }
+                else
+                {
+                    newClipIndex = rng.Next(0, this.audioClips.Length - 1);
+                    if (newClipIndex >= this.lastClip)
+                    {
+                        newClipIndex++;
+                    }
+                }
+
+                // play selected clip
+                this.lastClip = newClipIndex;
+                audioSource.PlayOneShot(this.audioClips[newClipIndex]);
+            }
         }
     }
 
     private class PlayedEmotion
     {
-        EmotionData emotionData;
-        DateTime endTime;
+        public EmotionData emotionData;
+        public DateTime endTime;
 
-        bool HasEnded => this.endTime >= DateTime.UtcNow;
+        public bool HasEnded => this.endTime >= DateTime.UtcNow;
 
         public PlayedEmotion(EmotionData emotion)
         {
@@ -40,21 +67,21 @@ public class EmotionController : MonoBehaviour
     }
 
     public EmotionData[] emotionData;
+    public AudioSource audioSource;
     private PlayedEmotion currentEmotion;
-
 
     public void SetEmotion(EmotionType emotion)
     {
         if (this.currentEmotion != null)
         {
-            if (this.currentEmotion.emotionData.emoji == emotion)
+            if (this.currentEmotion.emotionData.emotionType == emotion)
             {
                 // don't play again
                 return;
             }
 
             // disable current
-            this.currentEmotion.emotionData.SetActive(false);
+            this.currentEmotion.emotionData.SetActive(false, this.audioSource);
         }
 
         // enable new

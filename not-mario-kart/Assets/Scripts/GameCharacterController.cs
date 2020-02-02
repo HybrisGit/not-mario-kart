@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
-public class CharacterController : MonoBehaviour
+public class GameCharacterController : MonoBehaviour
 {
     public enum CharacterType
     {
@@ -17,19 +18,21 @@ public class CharacterController : MonoBehaviour
     public class CharacterSettings
     {
         public CharacterType character;
+        public EmotionController emotions;
         public GameObject[] objects;
 
         public void SetSelected(bool selected)
         {
-            foreach (GameObject object in this.objects)
+            foreach (GameObject obj in this.objects)
             {
-                object.SetActive(selected);
+                obj.SetActive(selected);
             }
         }
     }
 
     public CharacterSettings[] characters;
     private static List<CharacterType> takenCharacters = new List<CharacterType>();
+    public CharacterSettings selectedCharacter;
 
     void Start()
     {
@@ -43,6 +46,10 @@ public class CharacterController : MonoBehaviour
         foreach (CharacterSettings characterSettings in this.characters)
         {
             characterSettings.SetSelected(characterSettings.character == character);
+            if (characterSettings.character == character)
+            {
+                selectedCharacter = characterSettings;
+            }
         }
     }
 }

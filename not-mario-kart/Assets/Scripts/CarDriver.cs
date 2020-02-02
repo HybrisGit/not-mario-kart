@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CarController), typeof(EmotionController))]
+[RequireComponent(typeof(CarController), typeof(GameCharacterController))]
 public class CarDriver : MonoBehaviour
 {
     [HideInInspector]
     public CarController carController;
     [HideInInspector]
-    public EmotionController emotionController;
+    public GameCharacterController characterController;
 
     public bool isDriving;
     public Checkpoint nextCheckpoint;
@@ -35,16 +35,17 @@ public class CarDriver : MonoBehaviour
     {
         // if not next checkpoint
         Checkpoint checkpointInOther = other.GetComponent<Checkpoint>();
-        if (checkpointInOther != this.nextCheckpoint)
+        Debug.Log("Car driver hit trigger " + other.gameObject.name + " with checkpoint " + checkpointInOther + ". Is next : " + (checkpointInOther == this.nextCheckpoint));
+        if (checkpointInOther != this.nextCheckpoint && this.nextCheckpoint != null)
         {
             return;
         }
 
         // claim checkpoint
-        this.nextCheckpoint = this.nextCheckpoint.nextCheckpoint;
+        this.nextCheckpoint = checkpointInOther.nextCheckpoint;
     }
 
-    private static void AbsMin(float value, float min)
+    private static float AbsMin(float value, float min)
     {
         if (value >= 0f && value < min)
         {
@@ -54,6 +55,8 @@ public class CarDriver : MonoBehaviour
         {
             return -min;
         }
+
+        return value;
     }
 
     private void TryReachNextCheckpoint()
@@ -63,7 +66,7 @@ public class CarDriver : MonoBehaviour
 
         // calculate difference in position
         Vector3 distanceToTarget = this.nextCheckpoint.transform.position - this.transform.position;
-        Vector3 directionToTarget = normalize(distanceToTarget);
+        Vector3 directionToTarget = Vector3.Normalize(distanceToTarget);
 
         // project onto forward/right vectors
         float alongForward = Vector3.Dot(directionToTarget, this.transform.forward);
@@ -71,10 +74,10 @@ public class CarDriver : MonoBehaviour
 
         // accelerate forward/backward
         float torque = AbsMin(alongForward, 0.25f);
-        this.carController.CurrentTorque = alongForward;
+        this.carController.SetTorque(alongForward);
 
         // steer
         float steer = AbsMin(alongRight, 0.25f);
-        this.carController.CurrentSteering = steer;
+        this.carController.SetSteering(steer);
     }
 }

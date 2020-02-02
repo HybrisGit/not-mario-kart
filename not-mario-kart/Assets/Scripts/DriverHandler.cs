@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,8 @@ public class DriverHandler : MonoBehaviour
 {
     private class DriverData
     {
-        CarDriver driver;
-        uint checkpointsReached;
+        public CarDriver driver;
+        public uint checkpointsReached;
 
         public DriverData(CarDriver driver)
         {
@@ -16,8 +17,10 @@ public class DriverHandler : MonoBehaviour
         }
     }
 
-    private static DriverHandler _instance;
-    public static DriverHandler  => _instance;
+    public static DriverHandler Instance;
+    public int carsToSpawn;
+    public int spawnDelaySeconds;
+    public GameObject carPrefab;
 
     [HideInInspector]
     private List<DriverData> drivers = new List<DriverData>();
@@ -25,12 +28,31 @@ public class DriverHandler : MonoBehaviour
 
     void Awake()
     {
-        _instance = this;
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(this.SpawnCars());
+    }
+
+    private IEnumerator SpawnCars()
+    {
+        for (int i = 0; i < this.carsToSpawn; ++i)
+        {
+            // get spawn
+            Transform spawn = RaceTrack.Instance.checkpoints[0].transform;
+            // create at spawn
+            Instantiate(this.carPrefab, spawn.position, spawn.rotation, this.transform);
+
+            // wait
+            yield return new WaitForSeconds(this.spawnDelaySeconds);
+        }
     }
 
     public void Register(CarDriver driver)
     {
-        this.drivers.Add(driver);
+        this.drivers.Add(new DriverData(driver));
     }
 
     public void OnCheckpointReached(CarDriver driver)
@@ -46,7 +68,7 @@ public class DriverHandler : MonoBehaviour
                 {
                     leader = data;
                     // emote leader
-                    leader.driver.emotionController.SetEmotion(EmotionController.EmotionType.Happy);
+                    leader.driver.characterController.selectedCharacter.emotions.SetEmotion(EmotionController.EmotionType.Happy);
                 }
                 return;
             }

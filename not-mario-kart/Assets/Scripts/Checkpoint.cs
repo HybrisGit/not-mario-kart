@@ -7,7 +7,7 @@ public class Checkpoint : MonoBehaviour
 {
     [HideInInspector]
     public RaceTrack raceTrack;
-    [HideInInspector]
+
     public Checkpoint nextCheckpoint;
 
     public void Setup(RaceTrack raceTrack, Checkpoint nextCheckpoint)
