@@ -45,11 +45,18 @@ public class GameCharacterController : MonoBehaviour
     {
         foreach (CharacterSettings characterSettings in this.characters)
         {
-            characterSettings.SetSelected(characterSettings.character == character);
             if (characterSettings.character == character)
             {
-                selectedCharacter = characterSettings;
+                this.selectedCharacter = characterSettings;
+                continue;
             }
+            // disable all other characters
+            characterSettings.SetSelected(false);
         }
+
+        Debug.Log("Select character " + this.selectedCharacter.character);
+        // enable selected
+        this.selectedCharacter.SetSelected(true);
+        this.selectedCharacter.emotions.SetEmotion(EmotionController.EmotionType.Happy);
     }
 }

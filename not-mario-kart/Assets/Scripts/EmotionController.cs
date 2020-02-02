@@ -18,16 +18,15 @@ public class EmotionController : MonoBehaviour
     public class EmotionData
     {
         public EmotionType emotionType;
-        public GameObject emoji;
+        public Sprite emoji;
         public AudioClip[] audioClips;
 
         private int lastClip = 0;
 
         private static Random rng = new Random();
 
-        public void SetActive(bool active, AudioSource audioSource)
+        public void SetActive(bool active, AudioSource audioSource, SpriteRenderer spriteRenderer)
         {
-            this.emoji.SetActive(active);
             if (active)
             {
                 // pick random clip
@@ -48,6 +47,15 @@ public class EmotionController : MonoBehaviour
                 // play selected clip
                 this.lastClip = newClipIndex;
                 audioSource.PlayOneShot(this.audioClips[newClipIndex]);
+                Debug.Log("Play sound " + this.audioClips[newClipIndex] + " for " + audioSource.GetComponentInParent<GameCharacterController>().selectedCharacter.character);
+
+                // show sprite
+                spriteRenderer.sprite = this.emoji;
+            }
+            else
+            {
+                // hide sprite
+                spriteRenderer.sprite = null;
             }
         }
     }
@@ -57,7 +65,7 @@ public class EmotionController : MonoBehaviour
         public EmotionData emotionData;
         public DateTime endTime;
 
-        public bool HasEnded => this.endTime >= DateTime.UtcNow;
+        public bool HasEnded => this.endTime <= DateTime.UtcNow;
 
         public PlayedEmotion(EmotionData emotion)
         {
@@ -68,7 +76,20 @@ public class EmotionController : MonoBehaviour
 
     public EmotionData[] emotionData;
     public AudioSource audioSource;
+    public SpriteRenderer spriteRenderer;
     private PlayedEmotion currentEmotion;
+
+    private void Update()
+    {
+        if (this.currentEmotion != null)
+        {
+            if (this.currentEmotion.HasEnded)
+            {
+                this.currentEmotion.emotionData.SetActive(false, this.audioSource, this.spriteRenderer);
+                this.currentEmotion = null;
+            }
+        }
+    }
 
     public void SetEmotion(EmotionType emotion)
     {
@@ -81,11 +102,12 @@ public class EmotionController : MonoBehaviour
             }
 
             // disable current
-            this.currentEmotion.emotionData.SetActive(false, this.audioSource);
+            this.currentEmotion.emotionData.SetActive(false, this.audioSource, this.spriteRenderer);
         }
 
         // enable new
         EmotionData data = this.emotionData.First(e => e.emotionType == emotion);
         this.currentEmotion = new PlayedEmotion(data);
+        this.currentEmotion.emotionData.SetActive(true, this.audioSource, this.spriteRenderer);
     }
 }

@@ -35,7 +35,7 @@ public class CarDriver : MonoBehaviour
     {
         // if not next checkpoint
         Checkpoint checkpointInOther = other.GetComponent<Checkpoint>();
-        Debug.Log("Car driver hit trigger " + other.gameObject.name + " with checkpoint " + checkpointInOther + ". Is next : " + (checkpointInOther == this.nextCheckpoint));
+        //Debug.Log("Car driver hit trigger " + other.gameObject.name + " with checkpoint " + checkpointInOther + ". Is next : " + (checkpointInOther == this.nextCheckpoint));
         if (checkpointInOther != this.nextCheckpoint && this.nextCheckpoint != null)
         {
             return;
