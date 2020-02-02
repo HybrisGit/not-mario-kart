@@ -77,7 +77,7 @@ public class CarDriver : MonoBehaviour
         this.carController.SetTorque(alongForward);
 
         // steer
-        float steer = AbsMin(alongRight, 0.25f);
+        float steer = AbsMin(alongRight, 0.0f);
         this.carController.SetSteering(steer);
     }
 }

@@ -1,0 +1,16 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "application.generated.unity.notmariokart.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": "C:\\Users\\AGL Campus\\Documents\\not-mario-kart\\not-mario-kart\\not-mario-kart\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "not-mario-kart [Testing]"
+        }
+      }
+    }
+  ]
+}
