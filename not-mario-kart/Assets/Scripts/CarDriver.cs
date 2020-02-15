@@ -5,11 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(CarController), typeof(GameCharacterController))]
 public class CarDriver : MonoBehaviour
 {
+    [System.Serializable]
+    public struct DriverSettings
+    {
+        public float throttleMin;
+        public float forwardPreference;
+    }
+
     [HideInInspector]
     public CarController carController;
     [HideInInspector]
     public GameCharacterController characterController;
 
+    public DriverSettings driverSettings;
     public bool isDriving;
     public Checkpoint nextCheckpoint;
 
@@ -73,7 +81,7 @@ public class CarDriver : MonoBehaviour
         float alongRight = Vector3.Dot(directionToTarget, this.transform.right);
 
         // accelerate forward/backward
-        float torque = AbsMin(alongForward, 0.25f);
+        float torque = AbsMin(alongForward + this.driverSettings.forwardPreference, this.driverSettings.throttleMin);
         this.carController.SetTorque(alongForward);
 
         // steer
